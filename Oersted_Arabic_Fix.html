@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر أورستد التفاعلي</title>
+<style>
+:root{--navy:#10213a;--blue:#3478f6;--cyan:#6ce5df;--paper:#f4f8ff;--ink:#182944;--orange:#ffb35c;--red:#ff5964}
+body.dark{--ink:#e7eefb;background:radial-gradient(circle at 15% 0%,#1b3650,transparent 32%),linear-gradient(135deg,#0b1220,#131d31);color:var(--ink)}
+body.dark header{background:linear-gradient(110deg,#070d18,#10253e)}
+body.dark .panel,body.dark .tab:not(.active){background:#17243a;color:#e7eefb;border-color:#2b3c56;box-shadow:0 14px 35px #00000022}
+body.dark .muted,body.dark .soundnote{color:#a9bad2}
+body.dark .lab{background:linear-gradient(145deg,#192e45,#243c56);border-color:#36516e}
+body.dark .lab:before{background-image:linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px)}
+body.dark .pill{background:#203650;border-color:#35516f;color:#cde1fa}
+body.dark .pill strong{color:#fff}
+body.dark .seg button,body.dark .quiz button{background:#1b2c43;color:#dce8f8;border-color:#344b68}
+body.dark .seg button.selected{background:#153d42;border-color:#378c87;color:#b9fff4}
+body.dark .scientist{background:linear-gradient(135deg,#1b3448,#292741);border-color:#344862}
+body.dark .speech strong{color:#9fcaff}
+body.dark .fact{background:#142f32;border-color:#317d79;color:#e1f8f4}
+body.dark .action.secondary{background:#253951;color:#e0ecfb}
+body.dark .field-ring{filter:brightness(1.3)}
+body.dark .compass{box-shadow:0 10px 22px #0006}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#dff8ff,transparent 32%),linear-gradient(135deg,#f6f8ff,#e9efff);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(110deg,#101e38,#173b63);color:white;padding:24px clamp(16px,4vw,48px);position:relative;overflow:hidden}
+header:after{content:"";position:absolute;width:300px;height:300px;border:1px solid #ffffff22;border-radius:50%;left:-60px;top:-170px;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff06}
+.kicker{color:#82e9e2;font-size:13px;font-weight:bold;letter-spacing:1px}h1{margin:9px 0;font-size:clamp(27px,4vw,43px)}header p{margin:0;max-width:780px;line-height:1.9;color:#d6e6fa}
+main{max-width:1180px;margin:auto;padding:22px 16px 45px}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}.tab{border:0;border-radius:14px;padding:13px 18px;background:white;color:#2d4261;font-weight:bold;cursor:pointer;box-shadow:0 5px 18px #17375b12;transition:.2s}.tab.active{background:var(--blue);color:white;box-shadow:0 8px 22px #3478f644}.tab:hover{transform:translateY(-2px)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.8fr);gap:17px;align-items:start}
+.panel{background:#fff;border:1px solid #e1e9f5;border-radius:22px;padding:18px;box-shadow:0 14px 35px #1a37600d}
+.panel h2{font-size:20px;margin:0 0 8px}.muted{color:#64748b;font-size:13px;line-height:1.8}
+.lab{position:relative;min-height:440px;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#eaf6ff,#d8e9fa);border:1px solid #cfe0f2;margin-top:13px}
+.lab:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#ffffff4b 1px,transparent 1px),linear-gradient(90deg,#ffffff4b 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.bench{position:absolute;left:5%;right:5%;bottom:22px;height:23px;border-radius:10px;background:linear-gradient(#b2c9df,#809bb7);box-shadow:0 8px 0 #68829e}
+.wire{position:absolute;left:50%;top:7%;bottom:10%;width:10px;transform:translateX(-50%);border-radius:8px;background:linear-gradient(90deg,#a34d29,#ffbc72,#a54d2e);box-shadow:0 0 0 3px #ffffff8c,0 8px 14px #6d482a33;z-index:2}
+.current-arrow{position:absolute;left:calc(50% + 19px);top:24%;font-size:30px;font-weight:bold;color:#e54b48;z-index:3;text-shadow:0 2px white}
+.field-lines{position:absolute;inset:0;pointer-events:none;z-index:1}
+.field-ring{position:absolute;left:50%;top:50%;border:2px dashed #2783d7;border-radius:50%;transform:translate(-50%,-50%);opacity:.68;animation:spin 9s linear infinite}
+.field-ring:after{content:"";position:absolute;left:50%;top:-6px;width:10px;height:10px;background:#2783d7;border-radius:50%}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.compass{position:absolute;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,#fff 0 58%,#e3edf6 59% 66%,#6d849a 67% 71%,#fff 72%);box-shadow:0 10px 22px #23456538;z-index:5;display:flex;align-items:center;justify-content:center}
+.compass .needle{width:7px;height:78px;position:relative;transform-origin:50% 50%;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.needle:before,.needle:after{content:"";position:absolute;left:0;width:0;height:0;border-left:3.5px solid transparent;border-right:3.5px solid transparent}
+.needle:before{top:0;border-bottom:39px solid #e84b54}.needle:after{bottom:0;border-top:39px solid #2b5d91}
+.compass .hub{position:absolute;width:12px;height:12px;border-radius:50%;background:#e8edf5;border:2px solid #62758d;z-index:2}
+.north{position:absolute;top:8px;font-size:11px;font-weight:bold;color:#e84b54}
+.iron-dust{position:absolute;inset:0;z-index:3;pointer-events:none}
+.dust{position:absolute;width:3px;height:3px;border-radius:50%;background:#53616e;box-shadow:0 0 1px #fff;opacity:.85}
+.status{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.pill{background:#edf5ff;border:1px solid #d8e8fa;border-radius:999px;padding:8px 11px;font-size:12px;color:#2c527b}.pill strong{color:#153c6a}
+.controls{display:grid;gap:17px;margin-top:16px}.control label{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:bold;margin-bottom:9px}.control input[type=range]{width:100%;accent-color:#3478f6}.seg{display:flex;gap:8px}.seg button{flex:1;border:1px solid #d9e4f2;background:#f6f9ff;border-radius:11px;padding:10px;cursor:pointer;font-weight:bold;color:#30445f}.seg button.selected{background:#e3f8f5;border-color:#68cfc8;color:#126d68}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.action{border:0;border-radius:12px;padding:11px 14px;background:#18385d;color:#fff;font-weight:bold;cursor:pointer}.action.secondary{background:#eef4fb;color:#264563}.action.voice{background:#0f8c84}.action:disabled{opacity:.5;cursor:not-allowed}
+.scientist{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#f0fbff,#f4f2ff);border:1px solid #dce8f7;border-radius:18px;padding:12px;margin-bottom:13px}
+.avatar{width:95px;min-width:95px;height:112px;position:relative;overflow:hidden}
+.hair{position:absolute;width:66px;height:31px;left:14px;top:4px;background:#46362f;border-radius:40px 40px 15px 15px;z-index:3}.hair:before{content:"";position:absolute;width:18px;height:28px;left:3px;top:11px;background:#46362f;transform:rotate(-28deg);border-radius:70%}
+.face{position:absolute;width:51px;height:61px;left:21px;top:20px;border-radius:45% 45% 48% 48%;background:#efc39b;border:1px solid #d9a57d;z-index:2}.eye{position:absolute;top:23px;width:5px;height:7px;border-radius:50%;background:#26364b}.eye.left{left:12px}.eye.right{right:12px}.nose{position:absolute;left:24px;top:30px;width:5px;height:8px;border-right:2px solid #d29b75}.mustache{position:absolute;top:38px;left:12px;width:28px;height:7px;background:#6d4a37;border-radius:50%;}.coat{position:absolute;bottom:-5px;left:9px;width:76px;height:54px;background:#fff;border:2px solid #b9d0e4;border-radius:20px 20px 0 0;z-index:1}.coat:after{content:"";position:absolute;left:31px;top:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:31px solid #b5cde6}
+.avatar.talk .coat{animation:bob .5s infinite alternate}.avatar.talk .face{animation:bob .5s infinite alternate}
+@keyframes bob{to{transform:translateY(-2px)}}
+.speech{flex:1}.speech strong{display:block;color:#244f82;margin-bottom:5px}.speech p{margin:0;font-size:13px;line-height:1.9}.soundnote{font-size:11px;color:#718096;margin-top:7px}
+.fact{border-right:4px solid #54c9c0;padding:10px 12px;background:#f2fbfa;border-radius:8px;line-height:1.9;font-size:13px;margin-top:12px}
+.quiz{margin-top:13px;border:1px dashed #b9cce3;border-radius:15px;padding:13px}.quiz button{margin:5px 4px 0 0;border:1px solid #d7e4f4;border-radius:9px;padding:8px 10px;background:white;cursor:pointer}.quiz-answer{font-size:13px;font-weight:bold;margin-top:8px;min-height:20px}
+.hidden{display:none!important}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.lab{min-height:380px}.panel{padding:14px}.scientist{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">مختبر الفيزياء • تجربة تفاعلية</div>
+  <h1>أنا أورستد… تعالوا نكتشف المغناطيسية!</h1>
+  <p>غيّر اتجاه التيار وشدته بنفسك، وراقب إبرة البوصلة وخطوط المجال المغناطيسي حول السلك. أنا هانفّذ التجربة معاك خطوة بخطوة باللهجة المصرية.</p>
+</header>
+<main>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="compass">١. تجربة البوصلة</button>
+    <button class="tab" data-tab="filings">٢. السلك وبرادة الحديد</button>
+    <button class="tab" id="themeBtn" style="margin-right:auto">🌙 الوضع الداكن</button>
+  </div>
+  <div class="layout">
+    <section class="panel">
+      <h2 id="labTitle">تجربة البوصلة</h2>
+      <p class="muted" id="labDesc">قرّب البوصلة من السلك، وبعدها شغّل التيار ولاحظ انحراف الإبرة.</p>
+      <div class="lab" id="lab">
+        <div class="field-lines" id="fieldLines"></div>
+        <div class="wire" id="wire"></div>
+        <div class="current-arrow" id="arrow">↑</div>
+        <div class="compass" id="compass" style="left:23%;top:38%">
+          <span class="north">N</span><div class="needle" id="needle"></div><div class="hub"></div>
+        </div>
+        <div class="iron-dust hidden" id="ironDust"></div>
+        <div class="bench"></div>
+      </div>
+      <div class="status">
+        <span class="pill">اتجاه التيار: <strong id="directionText">لأعلى</strong></span>
+        <span class="pill">شدة التيار: <strong id="currentText">2.0 A</strong></span>
+        <span class="pill">المجال: <strong id="fieldText">متوسط</strong></span>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label>اتجاه التيار <span id="directionHint">من أسفل لأعلى</span></label>
+          <div class="seg">
+            <button id="upBtn" class="selected">↑ لأعلى</button>
+            <button id="downBtn">↓ لأسفل</button>
+          </div>
+        </div>
+        <div class="control">
+          <label for="current">شدة التيار <span id="currentVal">2.0 أمبير</span></label>
+          <input id="current" type="range" min="0" max="5" step=".5" value="2">
+          <div class="muted">حرّك المؤشر ولاحظ تغيّر انحراف الإبرة وكثافة خطوط المجال.</div>
+        </div>
+        <div class="control hidden" id="filingsControl">
+          <label>برادة الحديد <span id="filingsVal">0 حبيبة</span></label>
+          <div class="btnrow" style="margin-top:0;margin-bottom:10px">
+            <button class="action" id="filingsBtn">＋ أضف برادة الحديد</button>
+            <button class="action secondary" id="clearFilingsBtn">إزالة البرادة</button>
+          </div>
+          <label for="filingsAmount">كمية البرادة <span id="filingsAmountVal">50%</span></label>
+          <input id="filingsAmount" type="range" min="0" max="100" step="10" value="50">
+          <div class="muted">أضيفي البرادة ثم غيّري الكمية لملاحظة شكل خطوط المجال بشكل أوضح.</div>
+        </div>
+        <div class="control" id="positionControl">
+          <label for="distance">بُعد البوصلة عن السلك <span id="distanceVal">قريب</span></label>
+          <input id="distance" type="range" min="1" max="4" step="1" value="2">
+        </div>
+      </div>
+      <div class="btnrow">
+        <button class="action" id="powerBtn">⏻ تشغيل التيار</button>
+        <button class="action secondary" id="resetBtn">إعادة التجربة</button>
+        <button class="action voice" id="voiceBtn">🔊 Hear Oersted (English)</button>
+        <button class="action secondary" id="arabicBtn">🗣️ اسمع أورستد (عربية فصحى)</button>
+      </div>
+    </section>
+    <aside class="panel">
+      <div class="scientist">
+        <div class="avatar" id="avatar" aria-label="رسم متحرك مبسط لهانز كريستيان أورستد">
+          <div class="hair"></div><div class="face"><i class="eye left"></i><i class="eye right"></i><i class="nose"></i><i class="mustache"></i></div><div class="coat"></div>
+        </div>
+        <div class="speech">
+          <strong>هانز كريستيان أورستد</strong>
+          <p id="dialogue">Hello! I am Oersted. Let us discover how electric current creates a magnetic field.</p>
+          <div class="soundnote" id="voiceStatus">Press “Hear Oersted (English)” for English narration, or choose Arabic fusha.</div>
+        </div>
+      </div>
+      <h2>إيه اللي بنلاحظه؟</h2>
+      <div class="fact" id="observation">قبل تشغيل التيار، إبرة البوصلة بتتجه تقريبًا ناحية الشمال بسبب المجال المغناطيسي للأرض.</div>
+      <div class="fact"><strong>الفكرة العلمية:</strong> مرور تيار كهربائي في سلك بيكوّن مجالًا مغناطيسيًا حوالين السلك.</div>
+      <div class="quiz">
+        <strong>اختبر ملاحظتك</strong>
+        <p class="muted">لو عكسنا اتجاه التيار، إيه اللي يحصل لاتجاه المجال المغناطيسي؟</p>
+        <button data-answer="correct">ينعكس اتجاهه</button>
+        <button data-answer="wrong">يفضل زي ما هو</button>
+        <div class="quiz-answer" id="quizAnswer"></div>
+      </div>
+      <p class="muted" style="margin-top:14px">ملحوظة: المحاكاة توضيحية وليست قياسًا معمليًا دقيقًا. اتجاه الإبرة يتأثر بالمجال الناتج عن السلك وبالمجال المغناطيسي للأرض.</p>
+    </aside>
+  </div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let direction=1, current=2, powered=false, tab='compass', speaking=false, chosenVoice=null, narrationLang='en', filingsAdded=false;
+const lab=$('lab'), compass=$('compass');
+function buildRings(){
+  const box=$('fieldLines');box.innerHTML='';
+  [65,115,165,215,265,315].forEach((size,i)=>{
+    const ring=document.createElement('div');ring.className='field-ring';
+    ring.style.width=size+'px';ring.style.height=size+'px';ring.style.animationDuration=(7+i*1.2)+'s';
+    box.appendChild(ring);
+  });
+  renderFilings();
+}
+function renderFilings(){
+  const dust=$('ironDust'); if(!dust) return;
+  dust.innerHTML='';
+  const amount=+$('filingsAmount').value;
+  const total=filingsAdded ? Math.round(amount*2.4) : 0;
+  $('filingsVal').textContent=total+' حبيبة';
+  // Display iron filings as small particles aligned along circular magnetic field lines.
+  for(let i=0;i<total;i++){
+    const r=34 + ((i*37)%170);
+    const a=i*2.3999632297;
+    const d=document.createElement('i');d.className='dust';
+    d.style.left=`calc(50% + ${Math.cos(a)*r}px)`;
+    d.style.top=`calc(50% + ${Math.sin(a)*r}px)`;
+    d.style.width=(i%5===0?'4px':'3px');
+    d.style.height=(i%5===0?'4px':'3px');
+    d.style.transform=`rotate(${a*180/Math.PI}deg)`;
+    dust.appendChild(d);
+  }
+}
+function update(){
+  $('currentText').textContent=current.toFixed(1)+' A';
+  $('currentVal').textContent=current.toFixed(1)+' أمبير';
+  $('directionText').textContent=direction===1?'لأعلى':'لأسفل';
+  $('directionHint').textContent=direction===1?'من أسفل لأعلى':'من أعلى لأسفل';
+  $('arrow').textContent=powered?(direction===1?'↑':'↓'):'↕';
+  $('arrow').style.opacity=powered?1:.35;
+  $('arrow').style.color=direction===1?'#e54b48':'#2868c9';
+  $('wire').style.filter=powered?`drop-shadow(0 0 ${2+current*2}px #ff8c55)`:'none';
+  $('wire').style.opacity=powered?1:.55;
+  $('fieldLines').style.opacity=powered?Math.min(.95,.12+current*.17):.10;
+  $('ironDust').style.opacity=powered?Math.min(1,.4+current*.12):.7;
+  $('filingsAmountVal').textContent=$('filingsAmount').value+'%';
+  $('filingsBtn').textContent=filingsAdded?'✓ البرادة مضافة':'＋ أضف برادة الحديد';
+  $('filingsBtn').disabled=filingsAdded;
+  $('clearFilingsBtn').disabled=!filingsAdded;
+  $('filingsControl').classList.toggle('hidden',tab!=='filings');
+  if(tab==='filings') renderFilings();
+  document.querySelectorAll('.field-ring').forEach(r=>{r.style.borderStyle=direction===1?'dashed':'dotted';r.style.borderColor=direction===1?'#2783d7':'#d45d63';r.style.animationPlayState=powered&&current>0?'running':'paused';});
+  $('fieldText').textContent=!powered||current===0?'غير ظاهر':current<2?'ضعيف':current<4?'متوسط':'قوي';
+  const dist=+$('distance').value;
+  $('distanceVal').textContent=['','قريب جدًا','قريب','متوسط','بعيد'][dist];
+  if(tab==='compass'){
+    const x=dist===1?42:dist===2?32:dist===3?23:12;
+    compass.style.left=x+'%';compass.style.top='38%';compass.classList.remove('hidden');
+    $('ironDust').classList.add('hidden');$('fieldLines').classList.remove('hidden');
+    // Conceptual compass deflection: stronger current + closer wire => larger turn.
+    let angle=0;
+    if(powered&&current>0){const strength=current*(5/dist);angle=Math.min(68,strength*10)*direction;}
+    $('needle').style.transform=`rotate(${angle}deg)`;
+    $('labTitle').textContent='تجربة البوصلة';
+    $('labDesc').textContent='قرّب البوصلة من السلك، وبعدها شغّل التيار ولاحظ انحراف الإبرة.';
+    $('observation').textContent=!powered?'قبل تشغيل التيار، إبرة البوصلة بتتجه تقريبًا ناحية الشمال بسبب المجال المغناطيسي للأرض.':current===0?'التيار صفر، فمفيش مجال ناتج عن التيار؛ الإبرة بترجع لاتجاه الشمال تقريبًا.':`لاحظ انحراف الإبرة مع مرور التيار. ${direction===1?'اتجاه التيار لأعلى':'اتجاه التيار لأسفل'}، وكل ما تقرّب البوصلة من السلك أو تزود التيار يزيد التأثير في النموذج.`;
+  }else{
+    compass.classList.add('hidden');$('ironDust').classList.remove('hidden');$('fieldLines').classList.remove('hidden');
+    $('labTitle').textContent='السلك وبرادة الحديد';
+    $('labDesc').textContent='شوف شكل المجال من أعلى: البرادة بتترتب في دوائر حوالين السلك، والاتجاه بيتحدد بقاعدة اليد اليمنى.';
+    $('observation').textContent=!powered?'شغّل التيار عشان تلاحظ تمثيل خطوط المجال الدائرية حول السلك.':current===0?'من غير تيار، مفيش مجال مغناطيسي ناتج عن السلك.':'الدوائر بتمثل خطوط المجال حول السلك. عكس اتجاه التيار يعكس اتجاه المجال، وزيادة التيار بتقوّي المجال.';
+    $('arrow').textContent=powered?(direction===1?'↑':'↓'):'↕';
+  }
+}
+function setDirection(d){direction=d;$('upBtn').classList.toggle('selected',d===1);$('downBtn').classList.toggle('selected',d===-1);update();say(direction===1?'تمام، التيار ماشي لفوق. تابع اتجاه المجال حوالين السلك.':'دلوقتي عكسنا التيار وخليّناه لتحت. لاحظ إن اتجاه المجال المغناطيسي بيتعكس كمان.');}
+$('upBtn').onclick=()=>setDirection(1);$('downBtn').onclick=()=>setDirection(-1);
+$('current').oninput=e=>{current=+e.target.value;update();};
+$('distance').oninput=update;
+$('powerBtn').onclick=()=>{powered=!powered;$('powerBtn').textContent=powered?'⏻ إيقاف التيار':'⏻ تشغيل التيار';update();say(powered?'وصلنا الدائرة! بص على البوصلة أو خطوط المجال.':'فصلنا التيار. المجال الناتج عن السلك اختفى من التجربة.');};
+$('resetBtn').onclick=()=>{direction=1;current=2;powered=false;filingsAdded=false;$('current').value=2;$('distance').value=2;$('filingsAmount').value=50;$('powerBtn').textContent='⏻ تشغيل التيار';$('quizAnswer').textContent='';$('upBtn').classList.add('selected');$('downBtn').classList.remove('selected');update();say('The experiment is reset. Try changing one control at a time.');};
+document.querySelectorAll('.tab[data-tab]').forEach(b=>b.onclick=()=>{
+  tab=b.dataset.tab;
+  document.querySelectorAll('.tab[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+  $('positionControl').classList.toggle('hidden',tab==='filings');
+  update();
+  say(tab==='compass'?'Let us return to the compass and observe how the needle deflects.':'In this section, we will observe iron filings arranged around the wire.');
+});
+$('filingsBtn').onclick=()=>{filingsAdded=true;renderFilings();say('Iron filings added. Adjust the amount slider to change how many particles you can see.');};
+$('clearFilingsBtn').onclick=()=>{filingsAdded=false;renderFilings();};
+$('filingsAmount').oninput=()=>{renderFilings();update();};
+$('themeBtn').onclick=()=>{
+  document.body.classList.toggle('dark');
+  const dark=document.body.classList.contains('dark');
+  $('themeBtn').textContent=dark?'☀️ الوضع الفاتح':'🌙 الوضع الداكن';
+};
+document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>{$('quizAnswer').textContent=b.dataset.answer==='correct'?'مظبوط! عكس اتجاه التيار يعكس اتجاه المجال المغناطيسي.':'جرّب تاني: اتجاه المجال مرتبط باتجاه التيار.';$('quizAnswer').style.color=b.dataset.answer==='correct'?'#16836f':'#c34c55';});
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return [];
+  return window.speechSynthesis.getVoices() || [];
+}
+function say(text){
+  $('dialogue').textContent=text;
+  $('voiceStatus').textContent = narrationLang==='ar' ? 'تم اختيار العربية الفصحى… جارٍ تشغيل الصوت.' : 'English narration selected… starting audio.';
+  if(!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)){
+    $('voiceStatus').textContent='المتصفح لا يدعم الصوت هنا. جرّبي فتح الملف في Chrome أو Edge.';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const voices=loadVoices();
+  let voice;
+  if(narrationLang==='en'){
+    voice=voices.find(v=>/en[-_]US/i.test(v.lang))
+      || voices.find(v=>/en[-_]GB/i.test(v.lang))
+      || voices.find(v=>/^en/i.test(v.lang));
+  } else {
+    voice=voices.find(v=>/ar[-_]EG/i.test(v.lang))
+      || voices.find(v=>/^ar/i.test(v.lang))
+      || voices.find(v=>/Arabic|العربية/i.test(v.name));
+  }
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=voice ? voice.lang : (narrationLang==='en'?'en-US':'ar-EG');
+  u.rate=narrationLang==='en'?.94:.88; u.pitch=.92; u.volume=1;
+  if(voice) u.voice=voice;
+  let started=false;
+  u.onstart=()=>{started=true;$('avatar').classList.add('talk');$('voiceStatus').textContent='أورستد بيتكلم دلوقتي…';};
+  u.onend=()=>{$('avatar').classList.remove('talk');$('voiceStatus').textContent='خلص الكلام. اضغطي الزر لإعادة الاستماع.';};
+  u.onerror=(e)=>{$('avatar').classList.remove('talk');$('voiceStatus').textContent='الصوت ما اشتغلش ('+(e.error||'خطأ غير معروف')+'). جرّبي Chrome أو Edge وتأكدي إن صوت الجهاز شغال.';};
+  $('voiceStatus').textContent=voice ? (narrationLang==='en'?'Preparing English narration…':'تم العثور على صوت عربي؛ جارٍ التشغيل…') : (narrationLang==='en'?'No English voice found; trying the browser default.':'لا يوجد صوت عربي مثبت على الجهاز؛ سنحاول النطق باللغة العربية باستخدام الصوت الافتراضي.');
+  // Some browsers suspend speech until a direct click and resume.
+  window.speechSynthesis.resume();
+  window.speechSynthesis.speak(u);
+  setTimeout(()=>{
+    if(!started && window.speechSynthesis.speaking===false && window.speechSynthesis.pending===false){
+      $('voiceStatus').textContent='المتصفح ما بدأش تشغيل الصوت. جرّبي الضغط مرة تانية أو افتحي الملف في Chrome.';
+    }
+  },1200);
+}
+function sayEnglish(){
+  narrationLang='en';
+  let line;
+  if(powered && direction===-1) line='The current is flowing downward. The magnetic field direction reverses as well.';
+  else if(powered && direction===1) line='The circuit is on. Watch the compass needle and the magnetic field around the wire.';
+  else if(tab==='filings') line='Welcome to the iron filings experiment. Add iron filings, then change their amount to observe the pattern around the wire.';
+  else line='Hello! I am Hans Christian Oersted. Let us discover how an electric current creates a magnetic field.';
+  say(line);
+}
+function sayFusha(){
+  narrationLang='ar';
+  let line;
+  if(powered && direction===-1) line='لقد عكسنا اتجاه التيار الكهربائي، ولذلك ينعكس اتجاه المجال المغناطيسي أيضًا.';
+  else if(powered && direction===1) line='أغلقنا الدائرة الكهربائية. راقب انحراف إبرة البوصلة وخطوط المجال المغناطيسي حول السلك.';
+  else if(tab==='filings') line='مرحبًا بك في تجربة برادة الحديد. أضف البرادة وغيّر كميتها لملاحظة نمط المجال المغناطيسي حول السلك.';
+  else line='مرحبًا، أنا هانز كريستيان أورستد. هيا نكتشف كيف ينشأ مجال مغناطيسي حول سلك يمر به تيار كهربائي.';
+  say(line);
+}
+$('voiceBtn').addEventListener('click', sayEnglish);
+$('arabicBtn').addEventListener('click', () => {
+  sayFusha();
+  $('voiceStatus').textContent='تم اختيار العربية الفصحى. لو مفيش صوت، تأكدي من تثبيت صوت عربي في إعدادات ويندوز.';
+});
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged=()=>{loadVoices();};
+}
+buildRings();update();
+</script>
+</body>
+</html>
